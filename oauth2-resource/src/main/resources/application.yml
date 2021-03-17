@@ -1,0 +1,16 @@
+server:
+  port: 9501
+spring:
+  profiles:
+    active: dev
+  application:
+    name: oauth2-resource
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
