@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.gathub.auth.domain.SecurityUser;
+import cn.gathub.auth.service.principal.UserPrincipal;
+
 
 /**
  * JWT内容增强器
@@ -20,10 +21,10 @@ import cn.gathub.auth.domain.SecurityUser;
 public class JwtTokenEnhancer implements TokenEnhancer {
   @Override
   public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-    SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
     Map<String, Object> info = new HashMap<>();
     // 把用户ID设置到JWT中
-    info.put("id", securityUser.getId());
+    info.put("id", userPrincipal.getId());
     ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
     return accessToken;
   }

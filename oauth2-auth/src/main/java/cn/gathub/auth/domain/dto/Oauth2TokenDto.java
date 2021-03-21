@@ -1,4 +1,4 @@
-package cn.gathub.auth.domain;
+package cn.gathub.auth.domain.dto;
 
 import lombok.Builder;
 import lombok.Data;

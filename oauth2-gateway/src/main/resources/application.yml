@@ -11,7 +11,7 @@ spring:
         server-addr: localhost:8848
     gateway:
       routes: # 配置路由路径
-        - id: oauth2-api-route
+        - id: oauth2-resource-route
           uri: lb://oauth2-resource
           predicates:
             - Path=/resource/**
@@ -23,6 +23,24 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
+        - id: oauth2-auth-login
+          uri: lb://oauth2-auth
+          predicates:
+            - Path=/login
+          filters:
+            - PreserveHostHeader
+        - id: oauth2-auth-token
+          uri: lb://oauth2-auth
+          predicates:
+            - Path=/oauth/token
+          filters:
+            - PreserveHostHeader
+        - id: oauth2-auth-authorize
+          uri: lb://oauth2-auth
+          predicates:
+            - Path=/oauth/authorize
+          filters:
+            - PreserveHostHeader
       discovery:
         locator:
           enabled: true # 开启从注册中心动态创建路由的功能
@@ -41,4 +59,6 @@ secure:
   ignore:
     urls: # 配置白名单路径
       - "/actuator/**"
-      - "/auth/oauth/token"
+      - "/oauth/token"
+      - "/oauth/authorize"
+      - "/login"

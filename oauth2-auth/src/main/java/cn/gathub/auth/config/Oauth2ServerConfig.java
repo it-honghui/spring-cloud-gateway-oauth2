@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -20,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.gathub.auth.component.JwtTokenEnhancer;
-import cn.gathub.auth.service.UserServiceImpl;
+import cn.gathub.auth.service.ClientService;
+import cn.gathub.auth.service.UserService;
 import lombok.AllArgsConstructor;
 
 /**
@@ -33,20 +33,31 @@ import lombok.AllArgsConstructor;
 @EnableAuthorizationServer
 public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
-  private final PasswordEncoder passwordEncoder;
-  private final UserServiceImpl userDetailsService;
+  private final UserService userService;
+  private final ClientService clientService;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenEnhancer jwtTokenEnhancer;
 
   @Override
   public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-    clients.inMemory()
-        .withClient("client-app")
-        .secret(passwordEncoder.encode("123456"))
-        .scopes("all")
-        .authorizedGrantTypes("password", "refresh_token")
-        .accessTokenValiditySeconds(3600)
-        .refreshTokenValiditySeconds(86400);
+//    clients.inMemory()
+//        // 1、密码模式
+//        .withClient("client-app")
+//        .secret(passwordEncoder.encode("123456"))
+//        .scopes("read,write")
+//        .authorizedGrantTypes("password", "refresh_token")
+//        .accessTokenValiditySeconds(3600)
+//        .refreshTokenValiditySeconds(86400)
+//        .and()
+//        // 2、授权码授权
+//        .withClient("client-app-2")
+//        .secret(passwordEncoder.encode("123456"))
+//        .scopes("read")
+//        .authorizedGrantTypes("authorization_code", "refresh_token")
+//        .accessTokenValiditySeconds(3600)
+//        .refreshTokenValiditySeconds(86400)
+//        .redirectUris("https://www.gathub.cn", "https://www.baidu.com");
+    clients.withClientDetails(clientService);
   }
 
   @Override
@@ -57,7 +68,7 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     delegates.add(accessTokenConverter());
     enhancerChain.setTokenEnhancers(delegates); //配置JWT的内容增强器
     endpoints.authenticationManager(authenticationManager)
-        .userDetailsService(userDetailsService) //配置加载用户信息的服务
+        .userDetailsService(userService) //配置加载用户信息的服务
         .accessTokenConverter(accessTokenConverter())
         .tokenEnhancer(enhancerChain);
   }

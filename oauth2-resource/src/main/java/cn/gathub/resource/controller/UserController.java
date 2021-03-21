@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cn.gathub.resource.domain.UserDTO;
+import cn.gathub.resource.domain.User;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.json.JSONObject;
 
 /**
@@ -21,20 +22,19 @@ import cn.hutool.json.JSONObject;
 public class UserController {
 
   @GetMapping("/currentUser")
-  public UserDTO currentUser(HttpServletRequest request) {
+  public User currentUser(HttpServletRequest request) {
     // 从Header中获取用户信息
     String userStr = request.getHeader("user");
     JSONObject userJsonObject = new JSONObject(userStr);
-    UserDTO userDTO = new UserDTO();
-    userDTO.setUsername(userJsonObject.getStr("user_name"));
-    userDTO.setId(Convert.toLong(userJsonObject.get("id")));
-    userDTO.setRoles(Convert.toList(String.class, userJsonObject.get("authorities")));
-    return userDTO;
-
+    return User.builder()
+        .username(userJsonObject.getStr("user_name"))
+        .id(Convert.toLong(userJsonObject.get("id")))
+        .roles(Convert.toList(String.class, userJsonObject.get("authorities"))).build();
   }
 
   @GetMapping
   public JSONObject findUser(HttpServletRequest request) {
+    // 从Header中获取用户信息
     String userStr = request.getHeader("user");
     return new JSONObject(userStr);
   }

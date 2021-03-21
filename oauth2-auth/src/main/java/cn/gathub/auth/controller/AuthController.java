@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import cn.gathub.auth.api.CommonResult;
-import cn.gathub.auth.domain.Oauth2TokenDto;
+import cn.gathub.auth.domain.dto.Oauth2TokenDto;
 
 /**
  * 自定义Oauth2获取令牌接口

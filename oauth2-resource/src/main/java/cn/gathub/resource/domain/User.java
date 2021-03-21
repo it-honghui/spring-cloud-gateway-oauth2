@@ -1,8 +1,8 @@
-package cn.gathub.auth.domain;
+package cn.gathub.resource.domain;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,12 +11,10 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@AllArgsConstructor
-public class UserDTO {
+@Builder(toBuilder = true)
+public class User {
   private Long id;
   private String username;
   private String password;
-  private Integer status;
   private List<String> roles;
-
 }

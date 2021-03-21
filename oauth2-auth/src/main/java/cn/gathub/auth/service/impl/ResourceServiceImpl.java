@@ -1,4 +1,4 @@
-package cn.gathub.auth.service;
+package cn.gathub.auth.service.impl;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 
 import cn.gathub.auth.constant.RedisConstant;
+import cn.gathub.auth.service.ResourceService;
 import cn.hutool.core.collection.CollUtil;
 
 /**
@@ -18,7 +19,7 @@ import cn.hutool.core.collection.CollUtil;
  * @author Honghui [wanghonghui_work@163.com] 2021/3/16
  */
 @Service
-public class ResourceServiceImpl {
+public class ResourceServiceImpl implements ResourceService {
 
   private final RedisTemplate<String, Object> redisTemplate;
 

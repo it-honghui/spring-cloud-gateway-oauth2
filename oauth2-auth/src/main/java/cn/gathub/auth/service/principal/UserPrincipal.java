@@ -1,4 +1,4 @@
-package cn.gathub.auth.domain;
+package cn.gathub.auth.service.principal;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import cn.gathub.auth.domain.entity.User;
 import lombok.Data;
 
 /**
@@ -15,7 +16,7 @@ import lombok.Data;
  * @author Honghui [wanghonghui_work@163.com] 2021/3/16
  */
 @Data
-public class SecurityUser implements UserDetails {
+public class UserPrincipal implements UserDetails {
 
   /**
    * ID
@@ -38,18 +39,14 @@ public class SecurityUser implements UserDetails {
    */
   private Collection<SimpleGrantedAuthority> authorities;
 
-  public SecurityUser() {
-
-  }
-
-  public SecurityUser(UserDTO userDTO) {
-    this.setId(userDTO.getId());
-    this.setUsername(userDTO.getUsername());
-    this.setPassword(userDTO.getPassword());
-    this.setEnabled(userDTO.getStatus() == 1);
-    if (userDTO.getRoles() != null) {
+  public UserPrincipal(User user) {
+    this.setId(user.getId());
+    this.setUsername(user.getUsername());
+    this.setPassword(user.getPassword());
+    this.setEnabled(user.getStatus() == 1);
+    if (user.getRoles() != null) {
       authorities = new ArrayList<>();
-      userDTO.getRoles().forEach(item -> authorities.add(new SimpleGrantedAuthority(item)));
+      user.getRoles().forEach(item -> authorities.add(new SimpleGrantedAuthority(item)));
     }
   }
 
