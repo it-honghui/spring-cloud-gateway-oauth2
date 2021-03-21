@@ -9,7 +9,9 @@
 - oauth2-resource：受保护的API服务，用户鉴权通过后可以访问该服务，不整合Spring Security Oauth2
 ## 具体实现
 ### 一、认证服务`oauth2-auth`
+
 > 1、首先来搭建认证服务，它将作为Oauth2的认证服务使用，并且网关服务的鉴权功能也需要依赖它，在pom.xml中添加相关依赖，主要是Spring Security、Oauth2、JWT、Redis相关依赖
+
 ```java
 <dependencies>
     <dependency>
@@ -37,7 +39,9 @@
 </dependencies>
 
 ```
+
 > 2、在application.yml中添加相关配置，主要是Nacos和Redis相关配置
+
 ```yml
 server:
   port: 9401
@@ -64,20 +68,23 @@ management:
         include: "*"
 
 ```
+
 > 3、使用keytool生成RSA证书jwt.jks，复制到resource目录下，在JDK的bin目录下使用如下命令即可
+
 ```shell
 keytool -genkey -alias jwt -keyalg RSA -keystore jwt.jks
 ```
+
 > 4、创建UserServiceImpl类实现Spring Security的UserDetailsService接口，用于加载用户信息
+
 ```Java
-package cn.gathub.auth.service;
+package cn.gathub.auth.service.impl;
 
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -89,10 +96,10 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import cn.gathub.auth.constant.MessageConstant;
-import cn.gathub.auth.domain.SecurityUser;
-import cn.gathub.auth.domain.UserDTO;
+import cn.gathub.auth.domain.entity.User;
+import cn.gathub.auth.service.UserService;
+import cn.gathub.auth.service.principal.UserPrincipal;
 import cn.hutool.core.collection.CollUtil;
-
 
 /**
  * 用户管理业务类
@@ -100,9 +107,9 @@ import cn.hutool.core.collection.CollUtil;
  * @author Honghui [wanghonghui_work@163.com] 2021/3/16
  */
 @Service
-public class UserServiceImpl implements UserDetailsService {
+public class UserServiceImpl implements UserService {
 
-  private List<UserDTO> userList;
+  private List<User> userList;
   private final PasswordEncoder passwordEncoder;
 
   public UserServiceImpl(PasswordEncoder passwordEncoder) {
@@ -113,33 +120,117 @@ public class UserServiceImpl implements UserDetailsService {
   public void initData() {
     String password = passwordEncoder.encode("123456");
     userList = new ArrayList<>();
-    userList.add(new UserDTO(1L, "admin", password, 1, CollUtil.toList("ADMIN")));
-    userList.add(new UserDTO(2L, "user", password, 1, CollUtil.toList("USER")));
+    userList.add(new User(1L, "admin", password, 1, CollUtil.toList("ADMIN")));
+    userList.add(new User(2L, "user", password, 1, CollUtil.toList("USER")));
   }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    List<UserDTO> findUserList = userList.stream().filter(item -> item.getUsername().equals(username)).collect(Collectors.toList());
+    List<User> findUserList = userList.stream().filter(item -> item.getUsername().equals(username)).collect(Collectors.toList());
     if (CollUtil.isEmpty(findUserList)) {
       throw new UsernameNotFoundException(MessageConstant.USERNAME_PASSWORD_ERROR);
     }
-    SecurityUser securityUser = new SecurityUser(findUserList.get(0));
-    if (!securityUser.isEnabled()) {
+    UserPrincipal userPrincipal = new UserPrincipal(findUserList.get(0));
+    if (!userPrincipal.isEnabled()) {
       throw new DisabledException(MessageConstant.ACCOUNT_DISABLED);
-    } else if (!securityUser.isAccountNonLocked()) {
+    } else if (!userPrincipal.isAccountNonLocked()) {
       throw new LockedException(MessageConstant.ACCOUNT_LOCKED);
-    } else if (!securityUser.isAccountNonExpired()) {
+    } else if (!userPrincipal.isAccountNonExpired()) {
       throw new AccountExpiredException(MessageConstant.ACCOUNT_EXPIRED);
-    } else if (!securityUser.isCredentialsNonExpired()) {
+    } else if (!userPrincipal.isCredentialsNonExpired()) {
       throw new CredentialsExpiredException(MessageConstant.CREDENTIALS_EXPIRED);
     }
-    return securityUser;
+    return userPrincipal;
   }
 
 }
 
 ```
-> 5、添加认证服务相关配置Oauth2ServerConfig，需要配置加载用户信息的服务UserServiceImpl及RSA的钥匙对KeyPair
+
+> 5、创建ClientServiceImpl类实现Spring Security的ClientDetailsService接口，用于加载客户端信息
+
+```java
+package cn.gathub.auth.service.impl;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.provider.ClientRegistrationException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+
+import cn.gathub.auth.constant.MessageConstant;
+import cn.gathub.auth.domain.entity.Client;
+import cn.gathub.auth.service.ClientService;
+import cn.gathub.auth.service.principal.ClientPrincipal;
+import cn.hutool.core.collection.CollUtil;
+
+/**
+ * 客户端管理业务类
+ *
+ * @author Honghui [wanghonghui_work@163.com] 2021/3/18
+ */
+@Service
+public class ClientServiceImpl implements ClientService {
+
+  private List<Client> clientList;
+  private final PasswordEncoder passwordEncoder;
+
+  public ClientServiceImpl(PasswordEncoder passwordEncoder) {
+    this.passwordEncoder = passwordEncoder;
+  }
+
+  @PostConstruct
+  public void initData() {
+    String clientSecret = passwordEncoder.encode("123456");
+    clientList = new ArrayList<>();
+    // 1、密码模式
+    clientList.add(Client.builder()
+        .clientId("client-app")
+        .resourceIds("oauth2-resource")
+        .secretRequire(false)
+        .clientSecret(clientSecret)
+        .scopeRequire(false)
+        .scope("all")
+        .authorizedGrantTypes("password,refresh_token")
+        .authorities("ADMIN,USER")
+        .accessTokenValidity(3600)
+        .refreshTokenValidity(86400).build());
+    // 2、授权码模式
+    clientList.add(Client.builder()
+        .clientId("client-app-2")
+        .resourceIds("oauth2-resource2")
+        .secretRequire(false)
+        .clientSecret(clientSecret)
+        .scopeRequire(false)
+        .scope("all")
+        .authorizedGrantTypes("authorization_code,refresh_token")
+        .webServerRedirectUri("https://www.gathub.cn,https://www.baidu.com")
+        .authorities("USER")
+        .accessTokenValidity(3600)
+        .refreshTokenValidity(86400).build());
+  }
+
+  @Override
+  public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
+    List<Client> findClientList = clientList.stream().filter(item -> item.getClientId().equals(clientId)).collect(Collectors.toList());
+    if (CollUtil.isEmpty(findClientList)) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, MessageConstant.NOT_FOUND_CLIENT);
+    }
+    return new ClientPrincipal(findClientList.get(0));
+  }
+}
+
+```
+
+> 6、添加认证服务相关配置Oauth2ServerConfig，需要配置加载用户信息的服务UserServiceImpl和加载客户端信息的服务ClientServiceImpl及RSA的钥匙对KeyPair
+
 ```java
 package cn.gathub.auth.config;
 
@@ -147,7 +238,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -163,7 +253,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.gathub.auth.component.JwtTokenEnhancer;
-import cn.gathub.auth.service.UserServiceImpl;
+import cn.gathub.auth.service.ClientService;
+import cn.gathub.auth.service.UserService;
 import lombok.AllArgsConstructor;
 
 /**
@@ -176,20 +267,31 @@ import lombok.AllArgsConstructor;
 @EnableAuthorizationServer
 public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 
-  private final PasswordEncoder passwordEncoder;
-  private final UserServiceImpl userDetailsService;
+  private final UserService userService;
+  private final ClientService clientService;
   private final AuthenticationManager authenticationManager;
   private final JwtTokenEnhancer jwtTokenEnhancer;
 
   @Override
   public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-    clients.inMemory()
-        .withClient("client-app")
-        .secret(passwordEncoder.encode("123456"))
-        .scopes("all")
-        .authorizedGrantTypes("password", "refresh_token")
-        .accessTokenValiditySeconds(3600)
-        .refreshTokenValiditySeconds(86400);
+//    clients.inMemory()
+//        // 1、密码模式
+//        .withClient("client-app")
+//        .secret(passwordEncoder.encode("123456"))
+//        .scopes("read,write")
+//        .authorizedGrantTypes("password", "refresh_token")
+//        .accessTokenValiditySeconds(3600)
+//        .refreshTokenValiditySeconds(86400)
+//        .and()
+//        // 2、授权码授权
+//        .withClient("client-app-2")
+//        .secret(passwordEncoder.encode("123456"))
+//        .scopes("read")
+//        .authorizedGrantTypes("authorization_code", "refresh_token")
+//        .accessTokenValiditySeconds(3600)
+//        .refreshTokenValiditySeconds(86400)
+//        .redirectUris("https://www.gathub.cn", "https://www.baidu.com");
+    clients.withClientDetails(clientService);
   }
 
   @Override
@@ -200,7 +302,7 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
     delegates.add(accessTokenConverter());
     enhancerChain.setTokenEnhancers(delegates); //配置JWT的内容增强器
     endpoints.authenticationManager(authenticationManager)
-        .userDetailsService(userDetailsService) //配置加载用户信息的服务
+        .userDetailsService(userService) //配置加载用户信息的服务
         .accessTokenConverter(accessTokenConverter())
         .tokenEnhancer(enhancerChain);
   }
@@ -227,7 +329,9 @@ public class Oauth2ServerConfig extends AuthorizationServerConfigurerAdapter {
 }
 
 ```
-> 6、如果你想往JWT中添加自定义信息的话，比如说登录用户的ID，可以自己实现TokenEnhancer接口
+
+> 7、如果你想往JWT中添加自定义信息的话，比如说登录用户的ID，可以自己实现TokenEnhancer接口
+
 ```java
 package cn.gathub.auth.component;
 
@@ -240,7 +344,8 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.gathub.auth.domain.SecurityUser;
+import cn.gathub.auth.service.principal.UserPrincipal;
+
 
 /**
  * JWT内容增强器
@@ -251,17 +356,19 @@ import cn.gathub.auth.domain.SecurityUser;
 public class JwtTokenEnhancer implements TokenEnhancer {
   @Override
   public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-    SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
     Map<String, Object> info = new HashMap<>();
     // 把用户ID设置到JWT中
-    info.put("id", securityUser.getId());
+    info.put("id", userPrincipal.getId());
     ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
     return accessToken;
   }
 }
 
 ```
-> 7、由于我们的网关服务需要RSA的公钥来验证签名是否合法，所以认证服务需要有个接口把公钥暴露出来
+
+> 8、由于我们的网关服务需要RSA的公钥来验证签名是否合法，所以认证服务需要有个接口把公钥暴露出来
+
 ```java
 package cn.gathub.auth.controller;
 
@@ -299,7 +406,9 @@ public class KeyPairController {
 }
 
 ```
+
 > 9、还需要配置Spring Security，允许获取公钥接口的访问
+
 ```java
 package cn.gathub.auth.config;
 
@@ -343,9 +452,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 }
 
-
 ```
+
 > 10、创建一个资源服务ResourceServiceImpl，初始化的时候把资源与角色匹配关系缓存到Redis中，方便网关服务进行鉴权的时候获取
+
 ```java
 package cn.gathub.auth.service;
 
@@ -385,9 +495,12 @@ public class ResourceServiceImpl {
 }
 
 ```
+
 ### 二、网关服务`oauth2-gateway`
 接下来搭建网关服务，它将作为Oauth2的资源服务、客户端服务使用，对访问微服务的请求进行统一的校验认证和鉴权操作
+
 > 1、在pom.xml中添加相关依赖，主要是Gateway、Oauth2和JWT相关依赖
+
 ```java
 <dependencies>
     <dependency>
@@ -422,7 +535,9 @@ public class ResourceServiceImpl {
 </dependencies>
 
 ```
+
 > 2、在application.yml中添加相关配置，主要是路由规则的配置、Oauth2中RSA公钥的配置及路由白名单的配置
+
 ```yml
 server:
   port: 9201
@@ -437,7 +552,7 @@ spring:
         server-addr: localhost:8848
     gateway:
       routes: # 配置路由路径
-        - id: oauth2-api-route
+        - id: oauth2-resource-route
           uri: lb://oauth2-resource
           predicates:
             - Path=/resource/**
@@ -449,6 +564,24 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
+        - id: oauth2-auth-login
+          uri: lb://oauth2-auth
+          predicates:
+            - Path=/login
+          filters:
+            - PreserveHostHeader
+        - id: oauth2-auth-token
+          uri: lb://oauth2-auth
+          predicates:
+            - Path=/oauth/token
+          filters:
+            - PreserveHostHeader
+        - id: oauth2-auth-authorize
+          uri: lb://oauth2-auth
+          predicates:
+            - Path=/oauth/authorize
+          filters:
+            - PreserveHostHeader
       discovery:
         locator:
           enabled: true # 开启从注册中心动态创建路由的功能
@@ -467,10 +600,14 @@ secure:
   ignore:
     urls: # 配置白名单路径
       - "/actuator/**"
-      - "/auth/oauth/token"
+      - "/oauth/token"
+      - "/oauth/authorize"
+      - "/login"
 
 ```
+
 > 3、对网关服务进行配置安全配置，由于Gateway使用的是WebFlux，所以需要使用@EnableWebFluxSecurity注解开启
+
 ```java
 package cn.gathub.gateway.config;
 
@@ -543,6 +680,7 @@ public class ResourceServerConfig {
 
 ```
 > 4、在WebFluxSecurity中自定义鉴权操作需要实现ReactiveAuthorizationManager接口
+
 ```java
 package cn.gathub.gateway.authorization;
 
@@ -597,7 +735,9 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
 }
 
 ```
+
 > 5、这里我们还需要实现一个全局过滤器AuthGlobalFilter，当鉴权通过后将JWT令牌中的用户信息解析出来，然后存入请求的Header中，这样后续服务就不需要解析JWT令牌了，可以直接从请求的Header中获取到用户信息
+
 ```java
 package cn.gathub.gateway.filter;
 
@@ -654,9 +794,13 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 }
 
 ```
+
 ### 三、资源服务（API服务）`oauth2-resource`
+
 最后我们搭建一个API服务，它不会集成和实现任何安全相关逻辑，全靠网关来保护它
+
 > 1、在pom.xml中添加相关依赖，就添加了一个web依赖
+
 ```java
 <dependencies>
     <dependency>
@@ -665,7 +809,9 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     </dependency>
 </dependencies>
 ```
+
 > 2、在application.yml添加相关配置，很常规的配置
+
 ```yml
 server:
   port: 9501
@@ -685,7 +831,9 @@ management:
         include: "*"
 
 ```
+
 > 3、创建一个测试接口，网关验证通过即可访问
+
 ```java
 package cn.gathub.resource.controller;
 
@@ -706,7 +854,9 @@ public class HelloController {
 }
 
 ```
+
 > 4、创建一个获取登录中的用户信息的接口，用于从请求的Header中直接获取登录用户信息
+
 ```java
 package cn.gathub.resource.controller;
 
@@ -717,7 +867,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cn.gathub.resource.domain.UserDTO;
+import cn.gathub.resource.domain.User;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.json.JSONObject;
 
@@ -731,20 +881,19 @@ import cn.hutool.json.JSONObject;
 public class UserController {
 
   @GetMapping("/currentUser")
-  public UserDTO currentUser(HttpServletRequest request) {
+  public User currentUser(HttpServletRequest request) {
     // 从Header中获取用户信息
     String userStr = request.getHeader("user");
     JSONObject userJsonObject = new JSONObject(userStr);
-    UserDTO userDTO = new UserDTO();
-    userDTO.setUsername(userJsonObject.getStr("user_name"));
-    userDTO.setId(Convert.toLong(userJsonObject.get("id")));
-    userDTO.setRoles(Convert.toList(String.class, userJsonObject.get("authorities")));
-    return userDTO;
-
+    return User.builder()
+        .username(userJsonObject.getStr("user_name"))
+        .id(Convert.toLong(userJsonObject.get("id")))
+        .roles(Convert.toList(String.class, userJsonObject.get("authorities"))).build();
   }
 }
 
 ```
+
 ## 功能演示
 在此之前先启动我们的 Nacos 和 Redis 服务，然后依次启动`oauth2-auth`、`oauth2-gateway`及`oauth2-api`服务
 
@@ -753,18 +902,49 @@ public class UserController {
 docker pull nacos/nacos-server
 docker run --env MODE=standalone --name nacos -d -p 8848:8848 nacos/nacos-server
 ```
-> 1、使用密码模式获取JWT令牌，访问地址：http://localhost:9201/auth/oauth/token
-![image](https://user-images.githubusercontent.com/35522446/111439039-e9322880-873f-11eb-87ef-2ba4f26869c2.png)
+> 1、使用密码模式获取JWT令牌，访问地址：http://localhost:9201/oauth/token
+
+![image](https://user-images.githubusercontent.com/35522446/111894792-b8583900-8a48-11eb-8206-57aeb76d25ab.png)
+
 > 2、使用获取到的JWT令牌访问需要权限的接口，访问地址：http://localhost:9201/resource/hello
-![image](https://user-images.githubusercontent.com/35522446/111439499-652c7080-8740-11eb-96da-c0da0baee5fa.png)
+
+![image](https://user-images.githubusercontent.com/35522446/111894802-d4f47100-8a48-11eb-9f78-9125d27e4cb3.png)
+
 > 3、使用获取到的JWT令牌访问获取当前登录用户信息的接口，访问地址：http://localhost:9201/resource/user/currentUser
-![image](https://user-images.githubusercontent.com/35522446/111439662-8f7e2e00-8740-11eb-9680-d2cfa47c6fae.png)
-> 4、当token不存在时
-![image](https://user-images.githubusercontent.com/35522446/111439903-c6ecda80-8740-11eb-9f7c-92cd69e21c1b.png)
-> 5、当JWT令牌过期时，使用refresh_token获取新的JWT令牌，访问地址：http://localhost:9201/auth/oauth/token
-![image](https://user-images.githubusercontent.com/35522446/111440641-817cdd00-8741-11eb-9273-2250fcd94736.png)
-> 6、使用没有访问权限的`user`账号登录，访问接口时会返回如下信息，访问地址：http://localhost:9201/resource/hello
-![image](https://user-images.githubusercontent.com/35522446/111440858-b9842000-8741-11eb-9f1b-c4b971635393.png)
+
+![image](https://user-images.githubusercontent.com/35522446/111894819-fc4b3e00-8a48-11eb-853c-9ae1c58e4f18.png)
+
+> 4、当token不存在时，访问地址：http://localhost:9201/resource/user/currentUser
+
+![image](https://user-images.githubusercontent.com/35522446/111894829-108f3b00-8a49-11eb-8460-cd936b7b15f3.png)
+
+> 5、当JWT令牌过期时，使用refresh_token获取新的JWT令牌，访问地址：http://localhost:9201/oauth/token
+
+![image](https://user-images.githubusercontent.com/35522446/111894845-30befa00-8a49-11eb-8e35-878dada90401.png)
+
+> 6、使用授码模式登录时，先访问地址获取授权码：http://localhost:9201/oauth/authorize?response_type=code&client_id=client-app-2&redirect_uri=https://www.baidu.com
+
+> 7、访问地址，跳转登录页面
+
+![image](https://user-images.githubusercontent.com/35522446/111894879-78458600-8a49-11eb-9de8-05acf802c212.png)
+
+> 8、登录成功，进入授权页面
+
+![image](https://user-images.githubusercontent.com/35522446/111894893-9a3f0880-8a49-11eb-90fd-432717e88ac5.png)
+
+> 9、通过授权，拿到授权码
+
+![image](https://user-images.githubusercontent.com/35522446/111894917-d6726900-8a49-11eb-9a78-0103ae6d2033.png)
+
+> 10、拿到授权码，访问地址登录：http://localhost:9201/oauth/token
+
+![image](https://user-images.githubusercontent.com/35522446/111894933-fefa6300-8a49-11eb-8fd4-62c8ef9775f8.png)
+
+> 11、使用没有访问权限的`user`账号登录，访问接口时会返回如下信息，访问地址：http://localhost:9201/resource/hello
+
+![image](https://user-images.githubusercontent.com/35522446/111894957-28b38a00-8a4a-11eb-8077-a159b8f6eef1.png)
+
+
 ## 项目源码地址
 https://github.com/it-wwh/spring-cloud-gateway-oauth2
 ## 公众号
