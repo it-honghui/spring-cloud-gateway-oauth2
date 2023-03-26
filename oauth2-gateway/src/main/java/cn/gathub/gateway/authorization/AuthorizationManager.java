@@ -36,6 +36,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
 
   @Override
   public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
+    // xiangbo 当前用户？？？？？？
     // 1、从Redis中获取当前路径可访问角色列表
     URI uri = authorizationContext.getExchange().getRequest().getURI();
     Object obj = redisTemplate.opsForHash().get(RedisConstant.RESOURCE_ROLES_MAP, uri.getPath());
@@ -43,7 +44,16 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     authorities = authorities.stream().map(i -> i = AuthConstant.AUTHORITY_PREFIX + i).collect(Collectors.toList());
     LOGGER.info(authorities.toString());
     // 2、认证通过且角色匹配的用户可访问当前路径
-    return mono
+
+//      .any(roleId -> {
+//          // roleId是请求用户的角色(格式:ROLE_{roleId})，authorities是请求资源所需要角色的集合
+//          log.info("访问路径：{}", path);
+//          log.info("用户角色roleId：{}", roleId);
+//          log.info("资源需要权限authorities：{}", authorities);
+//          return authorities.contains(roleId);
+//      })
+
+      return mono
         .filter(Authentication::isAuthenticated)
         .flatMapIterable(Authentication::getAuthorities)
         .map(GrantedAuthority::getAuthority)
@@ -51,5 +61,4 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
         .map(AuthorizationDecision::new)
         .defaultIfEmpty(new AuthorizationDecision(false));
   }
-
 }

@@ -42,6 +42,7 @@ public class ResourceServerConfig {
   public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
     http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
     // 1、自定义处理JWT请求头过期或签名错误的结果
+    // 需要判断jwt是否在redis中
     http.oauth2ResourceServer().authenticationEntryPoint(restAuthenticationEntryPoint);
     // 2、对白名单路径，直接移除JWT请求头
     // @xiangbo 移除JWT请求头有什么意义？是否移除了header之后就获取不到user的信息了。
