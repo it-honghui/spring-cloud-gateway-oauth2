@@ -44,6 +44,7 @@ public class ResourceServerConfig {
     // 1、自定义处理JWT请求头过期或签名错误的结果
     http.oauth2ResourceServer().authenticationEntryPoint(restAuthenticationEntryPoint);
     // 2、对白名单路径，直接移除JWT请求头
+    // @xiangbo 移除JWT请求头有什么意义？是否移除了header之后就获取不到user的信息了。
     http.addFilterBefore(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
     http.authorizeExchange()
         .pathMatchers(ArrayUtil.toArray(ignoreUrlsConfig.getUrls(), String.class)).permitAll() // 白名单配置

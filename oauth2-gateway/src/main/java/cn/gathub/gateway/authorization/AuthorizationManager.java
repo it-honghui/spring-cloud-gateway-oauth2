@@ -1,6 +1,9 @@
 package cn.gathub.gateway.authorization;
 
 
+import cn.gathub.gateway.filter.AuthGlobalFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -25,8 +28,8 @@ import reactor.core.publisher.Mono;
  */
 @Component
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
+  private final static Logger LOGGER = LoggerFactory.getLogger(AuthorizationManager.class);
   private final RedisTemplate<String, Object> redisTemplate;
-
   public AuthorizationManager(RedisTemplate<String, Object> redisTemplate) {
     this.redisTemplate = redisTemplate;
   }
@@ -38,6 +41,7 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     Object obj = redisTemplate.opsForHash().get(RedisConstant.RESOURCE_ROLES_MAP, uri.getPath());
     List<String> authorities = Convert.toList(String.class, obj);
     authorities = authorities.stream().map(i -> i = AuthConstant.AUTHORITY_PREFIX + i).collect(Collectors.toList());
+    LOGGER.info(authorities.toString());
     // 2、认证通过且角色匹配的用户可访问当前路径
     return mono
         .filter(Authentication::isAuthenticated)

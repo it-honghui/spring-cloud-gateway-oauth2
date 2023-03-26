@@ -62,3 +62,4 @@ secure:
       - "/oauth/token"
       - "/oauth/authorize"
       - "/login"
+      - "/resource/demo"
