@@ -1,5 +1,7 @@
 package cn.gathub.auth.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.Query;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.CredentialsExpiredException;
@@ -48,7 +50,17 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    System.out.println(userServiceDB.list());
+//    System.out.println(username);
+//    QueryWrapper queryWrapper = new QueryWrapper();
+//    queryWrapper.le("username", username);
+//    List<User> userListDemo = userServiceDB.list(queryWrapper);
+//    try {
+//      List<String> roleList = userServiceDB.getBaseMapper().getData(username);
+//      System.out.println(roleList);
+//    } catch (Exception e) {
+//      System.out.println(e);
+//    }
+
     List<User> findUserList = userList.stream().filter(item -> item.getUsername().equals(username)).collect(Collectors.toList());
     if (CollUtil.isEmpty(findUserList)) {
       throw new UsernameNotFoundException(MessageConstant.USERNAME_PASSWORD_ERROR);
