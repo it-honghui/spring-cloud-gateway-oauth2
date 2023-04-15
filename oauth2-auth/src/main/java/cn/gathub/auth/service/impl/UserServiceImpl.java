@@ -1,5 +1,6 @@
 package cn.gathub.auth.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
@@ -20,7 +21,7 @@ import cn.gathub.auth.domain.entity.User;
 import cn.gathub.auth.service.UserService;
 import cn.gathub.auth.service.principal.UserPrincipal;
 import cn.hutool.core.collection.CollUtil;
-
+//import cn.gathub.auth.service.impl.UserServiceDBImpl;
 /**
  * 用户管理业务类
  *
@@ -28,9 +29,10 @@ import cn.hutool.core.collection.CollUtil;
  */
 @Service
 public class UserServiceImpl implements UserService {
-
   private List<User> userList;
   private final PasswordEncoder passwordEncoder;
+  @Autowired
+  private UserServiceDBImpl userServiceDB;
 
   public UserServiceImpl(PasswordEncoder passwordEncoder) {
     this.passwordEncoder = passwordEncoder;
@@ -46,6 +48,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    System.out.println(userServiceDB.list());
     List<User> findUserList = userList.stream().filter(item -> item.getUsername().equals(username)).collect(Collectors.toList());
     if (CollUtil.isEmpty(findUserList)) {
       throw new UsernameNotFoundException(MessageConstant.USERNAME_PASSWORD_ERROR);
