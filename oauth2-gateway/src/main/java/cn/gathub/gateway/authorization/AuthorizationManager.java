@@ -2,8 +2,10 @@ package cn.gathub.gateway.authorization;
 
 
 import cn.gathub.gateway.filter.AuthGlobalFilter;
+import cn.gathub.gateway.service.imp.UserServiceDBImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
@@ -34,6 +36,9 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     this.redisTemplate = redisTemplate;
   }
 
+  @Autowired
+  UserServiceDBImpl userServiceDB;
+
   @Override
   public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
     // xiangbo 当前用户？？？？？？
@@ -41,6 +46,9 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     URI uri = authorizationContext.getExchange().getRequest().getURI();
     Object obj = redisTemplate.opsForHash().get(RedisConstant.RESOURCE_ROLES_MAP, uri.getPath());
     System.out.println(obj);
+    Object o = userServiceDB.getBaseMapper().getData(uri.getPath());
+    System.out.println(uri.getPath());
+    System.out.println(o);
     List<String> authorities = Convert.toList(String.class, obj);
     authorities = authorities.stream().map(i -> i = AuthConstant.AUTHORITY_PREFIX + i).collect(Collectors.toList());
     LOGGER.info(authorities.toString());

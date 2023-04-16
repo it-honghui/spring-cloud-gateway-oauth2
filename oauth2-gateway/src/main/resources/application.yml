@@ -5,6 +5,12 @@ spring:
     active: dev
   application:
     name: oauth2-gateway
+  datasource:
+    name: defaultDataSource
+    url: jdbc:mysql://localhost:3306/skin
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
   cloud:
     nacos:
       discovery:
