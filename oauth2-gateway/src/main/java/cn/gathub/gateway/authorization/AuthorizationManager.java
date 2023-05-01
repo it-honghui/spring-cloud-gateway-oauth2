@@ -1,7 +1,6 @@
 package cn.gathub.gateway.authorization;
 
 
-import cn.gathub.gateway.filter.AuthGlobalFilter;
 import cn.gathub.gateway.service.imp.UserServiceDBImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
