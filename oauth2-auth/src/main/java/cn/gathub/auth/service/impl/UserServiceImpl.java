@@ -1,5 +1,6 @@
 package cn.gathub.auth.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import cn.gathub.auth.domain.entity.User;
 import cn.gathub.auth.service.UserService;
 import cn.gathub.auth.service.principal.UserPrincipal;
 import cn.hutool.core.collection.CollUtil;
-//import cn.gathub.auth.service.impl.UserServiceDBImpl;
+import cn.gathub.auth.service.impl.UserServiceDBImpl;
 /**
  * 用户管理业务类
  *
@@ -50,18 +51,28 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//    System.out.println(username);
-//    QueryWrapper queryWrapper = new QueryWrapper();
-//    queryWrapper.le("username", username);
-//    List<User> userListDemo = userServiceDB.list(queryWrapper);
-//    try {
-//      List<String> roleList = userServiceDB.getBaseMapper().getData(username);
-//      System.out.println(roleList);
-//    } catch (Exception e) {
-//      System.out.println(e);
-//    }
-
+    System.out.println(username);
+    User userListDemo = userServiceDB.getBaseMapper().getUserInfo(username);
+    if (userListDemo == null) {
+      System.out.println("no user");
+    } else {
+      System.out.println("userListDemo");
+      System.out.println(userListDemo);
+    }
+    try {
+      List<String> roleList = userServiceDB.getBaseMapper().getData(username);
+      System.out.println("Role list");
+      System.out.println(roleList);
+      userListDemo.setRoles(roleList);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    System.out.println("result !!!");
+    System.out.println(JSON.toJSONString(userListDemo));
+    // BD 获取 user  => role
     List<User> findUserList = userList.stream().filter(item -> item.getUsername().equals(username)).collect(Collectors.toList());
+    System.out.println("findUserList");
+    System.out.println(JSON.toJSONString(findUserList));
     if (CollUtil.isEmpty(findUserList)) {
       throw new UsernameNotFoundException(MessageConstant.USERNAME_PASSWORD_ERROR);
     }

@@ -19,4 +19,10 @@ public interface UserMapper extends BaseMapper<User> {
             "where user.username = #{username};"
     )
     List<String> getData(@Param("username") String username);
+
+
+    @Select("select * from tb_wang_user " +
+            "where username = #{username};"
+    )
+    User getUserInfo(@Param("username") String username);
 }
