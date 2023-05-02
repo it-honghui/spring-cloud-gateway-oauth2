@@ -47,6 +47,7 @@ public class ResourceServerConfig {
     // 2、对白名单路径，直接移除JWT请求头
     // @xiangbo 移除JWT请求头有什么意义？是否移除了header之后就获取不到user的信息了。
     http.addFilterBefore(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+    http.addFilterAfter(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
     http.authorizeExchange()
         .pathMatchers(ArrayUtil.toArray(ignoreUrlsConfig.getUrls(), String.class)).permitAll() // 白名单配置
         .anyExchange().access(authorizationManager) // 鉴权管理器配置

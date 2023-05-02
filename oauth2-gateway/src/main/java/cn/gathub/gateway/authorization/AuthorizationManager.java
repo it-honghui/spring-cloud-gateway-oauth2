@@ -2,6 +2,7 @@ package cn.gathub.gateway.authorization;
 
 
 import cn.gathub.gateway.service.imp.UserServiceDBImpl;
+import cn.gathub.gateway.utils.redis.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
 
   @Autowired
   UserServiceDBImpl userServiceDB;
+
+  @Autowired
+  RedisService redisService;
 
   @Override
   public Mono<AuthorizationDecision> check(Mono<Authentication> mono, AuthorizationContext authorizationContext) {
