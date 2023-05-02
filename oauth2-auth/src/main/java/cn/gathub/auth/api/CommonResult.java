@@ -1,11 +1,18 @@
 package cn.gathub.auth.api;
 
+import lombok.Data;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * 通用返回对象
  *
  * @author Honghui [wanghonghui_work@163.com] 2021/3/16
  */
+@Data
 public class CommonResult<T> {
+  private String timestamp;
   private long code;
   private String message;
   private T data;
@@ -14,6 +21,7 @@ public class CommonResult<T> {
   }
 
   protected CommonResult(long code, String message, T data) {
+    this.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     this.code = code;
     this.message = message;
     this.data = data;
