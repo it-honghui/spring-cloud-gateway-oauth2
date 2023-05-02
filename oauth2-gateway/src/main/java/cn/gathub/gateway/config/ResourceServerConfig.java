@@ -1,6 +1,8 @@
 package cn.gathub.gateway.config;
 
 
+import cn.gathub.gateway.filter.redisTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -38,6 +40,8 @@ public class ResourceServerConfig {
   private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
   private final IgnoreUrlsRemoveJwtFilter ignoreUrlsRemoveJwtFilter;
 
+  @Autowired
+  private redisTokenFilter redisTokenFilters;
   @Bean
   public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
     http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
@@ -47,7 +51,7 @@ public class ResourceServerConfig {
     // 2、对白名单路径，直接移除JWT请求头
     // @xiangbo 移除JWT请求头有什么意义？是否移除了header之后就获取不到user的信息了。
     http.addFilterBefore(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
-    http.addFilterAfter(ignoreUrlsRemoveJwtFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+    http.addFilterAfter(redisTokenFilters, SecurityWebFiltersOrder.AUTHENTICATION);
     http.authorizeExchange()
         .pathMatchers(ArrayUtil.toArray(ignoreUrlsConfig.getUrls(), String.class)).permitAll() // 白名单配置
         .anyExchange().access(authorizationManager) // 鉴权管理器配置
