@@ -70,7 +70,7 @@ public class redisTokenFilter implements WebFilter {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        String body = JSONUtil.toJsonStr(CommonResult.forbidden("登录过期，请重新登录"));
+        String body = JSONUtil.toJsonStr(CommonResult.unauthorized(null));
         DataBuffer buffer = response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(buffer));
       }
