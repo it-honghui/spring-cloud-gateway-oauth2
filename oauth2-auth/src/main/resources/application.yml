@@ -22,6 +22,7 @@ spring:
     port: 6379
     host: localhost
     password: root
+    cache-minute: 1
 management:
   endpoints:
     web:

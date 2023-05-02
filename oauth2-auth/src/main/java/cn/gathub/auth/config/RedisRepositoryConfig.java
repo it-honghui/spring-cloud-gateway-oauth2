@@ -13,7 +13,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  *
  * @author Honghui [wanghonghui_work@163.com] 2021/3/16
  */
-@Configuration
+//@Configuration
 @EnableRedisRepositories
 public class RedisRepositoryConfig {
 
@@ -30,5 +30,4 @@ public class RedisRepositoryConfig {
     redisTemplate.afterPropertiesSet();
     return redisTemplate;
   }
-
 }

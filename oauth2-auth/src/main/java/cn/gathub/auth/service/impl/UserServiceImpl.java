@@ -1,7 +1,9 @@
 package cn.gathub.auth.service.impl;
 
+import cn.gathub.auth.utils.redis.RedisService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
@@ -32,6 +34,9 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
   @Autowired
   private UserServiceDBImpl userServiceDB;
+
+  @Autowired
+  RedisService redisService;
 
   public UserServiceImpl(PasswordEncoder passwordEncoder) {
     this.passwordEncoder = passwordEncoder;
@@ -75,6 +80,9 @@ public class UserServiceImpl implements UserService {
     } else if (!userListDemo.isCredentialsNonExpired()) {
       throw new CredentialsExpiredException(MessageConstant.CREDENTIALS_EXPIRED);
     }
+    // 之前的方式只能控制到/auth/token的方法 请求的时候，target是实时的权限控制
+    // redis记录 user的信息，然后 gateway鉴权进行检验，实现实时的权限控制，当然这也必需要保证redis的高可用，因为redis已经成为核心流程
+    redisService.set("demo2", "demo2", 10L);
     return userListDemo;
   }
 }
