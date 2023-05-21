@@ -10,10 +10,7 @@ import cn.hutool.json.JSONObject;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -30,7 +27,7 @@ public class Project {
 
   @Autowired
   UserServiceDBImpl userService;
-  @GetMapping("/list")
+  @PostMapping("/list")
   public List<FileVo> project(HttpServletRequest request, @RequestBody @Validated ProjectListDTO dto) {
     // 从Header中获取用户信息
     String userStr = request.getHeader("user");
