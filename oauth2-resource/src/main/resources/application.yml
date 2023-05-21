@@ -28,3 +28,15 @@ management:
     web:
       exposure:
         include: "*"
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      table-prefix: tb_wang_
+      logic-delete-field: deleted
+      logic-not-delete-value: 0
+      logic-delete-value: 1

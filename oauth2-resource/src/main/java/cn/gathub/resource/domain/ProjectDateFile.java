@@ -15,4 +15,5 @@ public class ProjectDateFile {
   private String fileType;
   private Integer length;
   private Integer number;
+  private String date;
 }
