@@ -1,0 +1,116 @@
+# 启动命令
+# docker-compose --compatibility up -d
+# docker-compose -f docker-compose.yml up -d
+version: '3'
+
+services:
+# 如果是standalone模式起动，可以不配置外部mysql
+# prometheus、grafana暂时没有启动，以后学习后继续研究
+
+#  mysql:
+#    image: mysql
+#    container_name: mysql-lastest
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: nacos-db
+##      MYSQL_USER: root
+#      MYSQL_PASSWORD: root
+#    ports:
+#      - 3308:3306
+
+  nacos:
+    image: zhusaidong/nacos-server-m1:2.0.3
+    container_name: nacos
+    restart: always
+#    depends_on:
+#      - mysql
+    environment:
+#      MODE: standalone
+      PREFER_HOST_MODE: hostname #如果支持主机名可以使用hostname,否则使用ip，默认也是ip
+      SPRING_DATASOURCE_PLATFORM: mysql #数据源平台 仅支持mysql或不保存empty
+      MYSQL_SERVICE_HOST: 192.168.1.107
+      MYSQL_SERVICE_DB_NAME: nacos-db
+      MYSQL_SERVICE_PORT: 3308
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root
+      NACOS_APPLICATION_PORT: 8848
+      JVM_XMS: 512m
+      JVM_MMS: 320m
+#    volumes:
+#      - ./docker/nacos/conf:/home/nacos/conf
+    ports:
+      - "8848:8848"
+
+  nacos2:
+    image: zhusaidong/nacos-server-m1:2.0.3
+    container_name: nacos2
+    restart: always
+#    depends_on:
+#      - mysql
+    environment:
+#      MODE: standalone
+      PREFER_HOST_MODE: hostname #如果支持主机名可以使用hostname,否则使用ip，默认也是ip
+      SPRING_DATASOURCE_PLATFORM: mysql #数据源平台 仅支持mysql或不保存empty
+      MYSQL_SERVICE_HOST: 192.168.1.107
+      MYSQL_SERVICE_DB_NAME: nacos-db
+      MYSQL_SERVICE_PORT: 3308
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root
+      NACOS_APPLICATION_PORT: 8849
+      JVM_XMS: 512m
+      JVM_MMS: 320m
+#    volumes:
+#      - ./docker/nacos/conf:/home/nacos/conf
+    ports:
+      - "8849:8849"
+
+  nacos3:
+    image: zhusaidong/nacos-server-m1:2.0.3
+    container_name: nacos3
+    restart: always
+#    depends_on:
+#      - mysql
+    environment:
+#      MODE: standalone
+      PREFER_HOST_MODE: hostname #如果支持主机名可以使用hostname,否则使用ip，默认也是ip
+      SPRING_DATASOURCE_PLATFORM: mysql #数据源平台 仅支持mysql或不保存empty
+      MYSQL_SERVICE_HOST: 192.168.1.107
+      MYSQL_SERVICE_DB_NAME: nacos-db
+      MYSQL_SERVICE_PORT: 3308
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root
+      NACOS_APPLICATION_PORT: 8850
+      JVM_XMS: 512m
+      JVM_MMS: 320m
+#    volumes:
+#      - ./docker/nacos/conf:/home/nacos/conf
+    ports:
+      - "8850:8850"
+
+  nacos-nginx:
+    container_name: nacos-nginx
+    image: nginx:1.21.1
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    #      - /home/nacos-nginx/www:/usr/share/nginx
+    ports:
+      - "8845:80"
+#    restart: on-failure
+
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus:latest
+#    volumes:
+#      - ./docker/nacos/prometheus/prometheus-standalone.yaml:/etc/prometheus/prometheus.yml
+#    ports:
+#      - "9090:9090"
+#    depends_on:
+#      - nacos
+#    restart: on-failure
+#  grafana:
+#    container_name: grafana
+#    image: grafana/grafana:latest
+#    ports:
+#      - 3000:3000
+#    restart: on-failure

@@ -1,0 +1,48 @@
+# 启动命令
+# docker-compose --compatibility up -d
+# docker-compose -f docker-compose.yml up -d
+version: '3'
+
+services:
+# 如果是standalone模式起动，可以不配置外部mysql
+# prometheus、grafana暂时没有启动，以后学习后继续研究
+
+  mysql:
+    image: mysql
+    container_name: mysql-lastest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nacos-db
+#      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - 3308:3306
+
+
+#  nacos-nginx:
+#    container_name: nacos-nginx
+#    image: nginx:1.21.1
+#    volumes:
+#      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+##      - /home/nacos-nginx/www:/usr/share/nginx
+#    ports:
+#      - "8845:80"
+#    restart: on-failure
+
+#  prometheus:
+#    container_name: prometheus
+#    image: prom/prometheus:latest
+#    volumes:
+#      - ./docker/nacos/prometheus/prometheus-standalone.yaml:/etc/prometheus/prometheus.yml
+#    ports:
+#      - "9090:9090"
+#    depends_on:
+#      - nacos
+#    restart: on-failure
+#  grafana:
+#    container_name: grafana
+#    image: grafana/grafana:latest
+#    ports:
+#      - 3000:3000
+#    restart: on-failure
