@@ -1,5 +1,6 @@
 package cn.gathub.resource.domain;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,4 +16,5 @@ import java.util.List;
 public class Project {
   private Long id;
   private String projectName;
+  private String userId;
 }

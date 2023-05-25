@@ -2,6 +2,7 @@ package cn.gathub.resource.domain;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
