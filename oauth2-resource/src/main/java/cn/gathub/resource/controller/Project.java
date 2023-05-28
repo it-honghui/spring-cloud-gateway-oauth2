@@ -1,6 +1,7 @@
 package cn.gathub.resource.controller;
 
 import cn.gathub.resource.DTO.ProjectListDTO;
+import cn.gathub.resource.DTO.ProjectListSave;
 import cn.gathub.resource.Oauth2ResourceApplication;
 import cn.gathub.resource.VO.FileVo;
 import cn.gathub.resource.domain.ProjectDateFile;
@@ -65,6 +66,16 @@ public class Project {
     List<Project> obj =  projectService.list(queryWrapper);
     System.out.println(JSON.toJSONString(obj));
     return obj;
+  }
+
+  @PostMapping("/save")
+  public void saveProjectFileInfo(HttpServletRequest request, @RequestBody ProjectListSave dto) {
+    // 从Header中获取用户信息
+    String userStr = request.getHeader("user");
+    JSONObject userJsonObject = new JSONObject(userStr);
+    String userId =  userJsonObject.getStr("id");
+    System.out.println(dto);
+    System.out.println(userId);
   }
 }
 
