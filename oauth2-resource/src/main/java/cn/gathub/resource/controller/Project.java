@@ -7,6 +7,7 @@ import cn.gathub.resource.VO.FileVo;
 import cn.gathub.resource.domain.ProjectDate;
 import cn.gathub.resource.domain.ProjectDateFile;
 import cn.gathub.resource.domain.User;
+import cn.gathub.resource.service.imp.ProjectDateFileServiceDBImpl;
 import cn.gathub.resource.service.imp.ProjectDateServiceDBImpl;
 import cn.gathub.resource.service.imp.ProjectServiceDBImpl;
 import cn.gathub.resource.service.imp.UserServiceDBImpl;
@@ -39,6 +40,9 @@ public class Project {
 
   @Autowired
   ProjectDateServiceDBImpl projectDateServiceDB;
+
+  @Autowired
+  ProjectDateFileServiceDBImpl projectDateFileServiceDB;
 
   @PostMapping("/list")
   public List<FileVo> project(HttpServletRequest request, @RequestBody @Validated ProjectListDTO dto) {
@@ -102,11 +106,19 @@ public class Project {
       queryWrapper2.eq("project_id", dto.getProjectId());
       ProjectDate searchProjectDate = projectDateServiceDB.getOne(queryWrapper2);
       projectDate.setId(searchProjectDate.getId());
+    } else {
+      // 先删除 project file 表格中的所有
+      QueryWrapper queryWrapper1 = new QueryWrapper();
+      queryWrapper1.eq("project_date_id", projectDate.getId());
+      projectDateFileServiceDB.remove(queryWrapper1);
     }
     System.out.println(projectDate.getId());
-    // project file 表格
-    System.out.println(dto);
-    System.out.println(userId);
+    // project file 表格插入
+    dto.getList().stream().forEach(item -> {
+      item.setProjectDateId(projectDate.getId());
+    });
+    System.out.println(JSON.toJSONString(dto.getList()));
+    projectDateFileServiceDB.saveBatch(dto.getList());
   }
 }
 

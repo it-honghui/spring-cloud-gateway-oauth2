@@ -1,7 +1,7 @@
 package cn.gathub.resource.mapper;
 
+import cn.gathub.resource.domain.ProjectDate;
 import cn.gathub.resource.domain.ProjectDateFile;
-import cn.gathub.resource.domain.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Mapper
-public interface UserMapper extends BaseMapper<User> {
+public interface ProjectDateFileMapper extends BaseMapper<ProjectDateFile> {
     @Select("select *, file_type, `number`, length, `date` from tb_wang_project " +
             "left join tb_wang_project_date twpd on tb_wang_project.id = twpd.project_id " +
             "left join tb_wang_project_date_file twpf on twpd.id = twpf.project_date_id " +

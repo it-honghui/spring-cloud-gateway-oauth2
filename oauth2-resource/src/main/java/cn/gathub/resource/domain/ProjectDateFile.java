@@ -14,4 +14,5 @@ public class ProjectDateFile {
   private Integer length;
   private Integer number;
   private String date;
+  private Long projectDateId;
 }
