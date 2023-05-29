@@ -11,8 +11,8 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Builder(toBuilder = true)
 public class ProjectDate {
   private Long id;
   private String date;
+  private Long projectId;
 }

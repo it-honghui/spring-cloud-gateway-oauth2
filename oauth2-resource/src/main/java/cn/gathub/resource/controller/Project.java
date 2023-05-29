@@ -4,8 +4,10 @@ import cn.gathub.resource.DTO.ProjectListDTO;
 import cn.gathub.resource.DTO.ProjectListSave;
 import cn.gathub.resource.Oauth2ResourceApplication;
 import cn.gathub.resource.VO.FileVo;
+import cn.gathub.resource.domain.ProjectDate;
 import cn.gathub.resource.domain.ProjectDateFile;
 import cn.gathub.resource.domain.User;
+import cn.gathub.resource.service.imp.ProjectDateServiceDBImpl;
 import cn.gathub.resource.service.imp.ProjectServiceDBImpl;
 import cn.gathub.resource.service.imp.UserServiceDBImpl;
 import cn.hutool.json.JSONObject;
@@ -34,6 +36,9 @@ public class Project {
 
   @Autowired
   ProjectServiceDBImpl projectService;
+
+  @Autowired
+  ProjectDateServiceDBImpl projectDateServiceDB;
 
   @PostMapping("/list")
   public List<FileVo> project(HttpServletRequest request, @RequestBody @Validated ProjectListDTO dto) {
@@ -74,6 +79,32 @@ public class Project {
     String userStr = request.getHeader("user");
     JSONObject userJsonObject = new JSONObject(userStr);
     String userId =  userJsonObject.getStr("id");
+    // project date 表
+    // 如果不存在就建立或者update
+    // 判断是否存在
+    QueryWrapper queryWrapper = new QueryWrapper();
+    queryWrapper.eq("project_id", dto.getProjectId());
+    List<ProjectDate> projectDateList =  projectDateServiceDB.list();
+    ProjectDate projectDate = new ProjectDate();
+    projectDate.setDate(dto.getDate());
+    projectDate.setProjectId(dto.getProjectId());
+    if (projectDateList != null) {
+      projectDateList.stream().forEach(item -> {
+        if (item.getDate().equals(projectDate.getDate())) {
+          projectDate.setId(item.getId());
+        }
+      });
+    }
+    projectDateServiceDB.saveOrUpdate(projectDate);
+    if (projectDate.getId() == null) {
+      QueryWrapper queryWrapper2 = new QueryWrapper();
+      queryWrapper2.eq("date", dto.getDate());
+      queryWrapper2.eq("project_id", dto.getProjectId());
+      ProjectDate searchProjectDate = projectDateServiceDB.getOne(queryWrapper2);
+      projectDate.setId(searchProjectDate.getId());
+    }
+    System.out.println(projectDate.getId());
+    // project file 表格
     System.out.println(dto);
     System.out.println(userId);
   }
