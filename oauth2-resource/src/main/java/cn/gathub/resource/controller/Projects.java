@@ -1,12 +1,12 @@
 package cn.gathub.resource.controller;
 
+import cn.gathub.resource.DTO.ProjectDTO;
 import cn.gathub.resource.DTO.ProjectListDTO;
 import cn.gathub.resource.DTO.ProjectListSave;
-import cn.gathub.resource.Oauth2ResourceApplication;
 import cn.gathub.resource.VO.FileVo;
+import cn.gathub.resource.domain.Project;
 import cn.gathub.resource.domain.ProjectDate;
 import cn.gathub.resource.domain.ProjectDateFile;
-import cn.gathub.resource.domain.User;
 import cn.gathub.resource.service.imp.ProjectDateFileServiceDBImpl;
 import cn.gathub.resource.service.imp.ProjectDateServiceDBImpl;
 import cn.gathub.resource.service.imp.ProjectServiceDBImpl;
@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @RestController()
 @RequestMapping("/project")
-public class Project {
+public class Projects {
 
   @Autowired
   UserServiceDBImpl userService;
@@ -119,6 +118,30 @@ public class Project {
     });
     System.out.println(JSON.toJSONString(dto.getList()));
     projectDateFileServiceDB.saveBatch(dto.getList());
+  }
+
+
+  @PostMapping("/saveProject")
+  public List<Project> saveProject(HttpServletRequest request, @RequestBody ProjectDTO p) {
+    // 从Header中获取用户信息
+    String userStr = request.getHeader("user");
+    JSONObject userJsonObject = new JSONObject(userStr);
+    String userId =  userJsonObject.getStr("id");
+    QueryWrapper queryWrapper = new QueryWrapper();
+    queryWrapper.eq("user_id", userId);
+    queryWrapper.eq("project_name", p.getProjectName());
+    List<Project> p1List = projectService.list(queryWrapper);
+    if (p1List!= null && p1List.size() == 0) {
+      Project project = new Project();
+      project.setProjectName(p.getProjectName());
+      project.setUserId(userId);
+      projectService.save(project);
+
+      QueryWrapper queryWrapper2 = new QueryWrapper();
+      queryWrapper2.eq("user_id", userId);
+      return projectService.list(queryWrapper2);
+    }
+    throw new RuntimeException("123");
   }
 }
 
