@@ -87,7 +87,7 @@ public class Projects {
     // 判断是否存在
     QueryWrapper queryWrapper = new QueryWrapper();
     queryWrapper.eq("project_id", dto.getProjectId());
-    List<ProjectDate> projectDateList =  projectDateServiceDB.list();
+    List<ProjectDate> projectDateList =  projectDateServiceDB.list(queryWrapper);
     ProjectDate projectDate = new ProjectDate();
     projectDate.setDate(dto.getDate());
     projectDate.setProjectId(dto.getProjectId());
