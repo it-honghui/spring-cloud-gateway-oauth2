@@ -14,6 +14,7 @@
         <module>oauth2-auth</module>
         <module>oauth2-resource</module>
         <module>feign-client</module>
+        <module>oauth2-resource-menu</module>
     </modules>
 
     <properties>
