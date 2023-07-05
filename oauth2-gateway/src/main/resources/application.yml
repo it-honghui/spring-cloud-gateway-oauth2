@@ -23,6 +23,12 @@ spring:
             - Path=/resource/**
           filters:
             - StripPrefix=1
+        - id: oauth2-resource-menu-route
+          uri: lb://oauth2-resource-menu
+          predicates:
+            - Path=/resource-menu/**
+          filters:
+            - StripPrefix=1
         - id: oauth2-auth-route
           uri: lb://oauth2-auth
           predicates:
