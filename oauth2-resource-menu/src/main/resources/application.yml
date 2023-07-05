@@ -13,7 +13,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   datasource:
     name: defaultDataSource
-    url: jdbc:mysql://localhost:3306/project
+    url: jdbc:mysql://localhost:3306/menu
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
