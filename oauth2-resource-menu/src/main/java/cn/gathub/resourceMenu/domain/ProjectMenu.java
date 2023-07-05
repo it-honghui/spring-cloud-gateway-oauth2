@@ -2,6 +2,7 @@ package cn.gathub.resourceMenu.domain;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -16,4 +17,9 @@ public class ProjectMenu {
   private Long parentCid;
   private Long catLevel;
   private Long showStatus;
+
+  private int sort;
+
+  @TableField(exist = false)
+  private List<ProjectMenu> children;
 }
