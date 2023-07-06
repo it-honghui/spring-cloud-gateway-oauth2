@@ -26,23 +26,30 @@ public class Menus {
   ProjectMenuDBImpl projectMenuDB;
 
   @PostMapping("/list")
-  public List<ProjectMenu> project(HttpServletRequest request) {
+  public MenuVo project(HttpServletRequest request) {
     // 从Header中获取用户信息
     String userStr = request.getHeader("user");
     JSONObject userJsonObject = new JSONObject(userStr);
     System.out.println((userJsonObject));
 
-    List<ProjectMenu> allMenus = projectMenuDB.list(null);
-
-    List<ProjectMenu> d =  allMenus.stream()
-            .filter(item -> item.getParentCid() == 0)
-            .map(item -> {
-                item.setChildren(Menus.getChildren(item, allMenus));
-                return item;
-            })
-            .sorted(Comparator.comparingInt(ProjectMenu::getSort).reversed())
-            .collect(Collectors.toList());
-    return d;
+    List<String> authorities = (List<String>)userJsonObject.get("authorities");
+    String authoritiesStr = authorities.stream()
+            .map(item -> "`" + item + "`")
+            .map(item -> item.replace("`", "'"))
+            .collect(Collectors.joining(","));
+    List<ProjectMenu> allMenus = projectMenuDB.getBaseMapper().getRoleNames(authoritiesStr);
+    MenuVo menuVo = new MenuVo();
+    List<ProjectMenu> projectMenus = allMenus.stream()
+              .filter(item -> item.getParentCid() == 0)
+              .map(item -> {
+                  item.setChildren(Menus.getChildren(item, allMenus));
+                  return item;
+              })
+              .sorted(Comparator.comparingInt(ProjectMenu::getSort).reversed())
+              .collect(Collectors.toList());
+    menuVo.setList(projectMenus);
+    menuVo.setTotal(projectMenus.size());
+    return menuVo;
   }
 
   public static List<ProjectMenu> getChildren(ProjectMenu root, List<ProjectMenu> allMenus) {
@@ -53,7 +60,7 @@ public class Menus {
                 return item;
             })
             .sorted(Comparator.comparingInt(ProjectMenu::getSort).reversed())
-           .collect(Collectors.toList());
+            .collect(Collectors.toList());
   }
 }
 

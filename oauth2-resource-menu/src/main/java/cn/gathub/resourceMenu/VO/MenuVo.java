@@ -1,11 +1,12 @@
 package cn.gathub.resourceMenu.VO;
 
+import cn.gathub.resourceMenu.domain.ProjectMenu;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class MenuVo {
-    private String date;
-    private List<String> list;
+    private Integer total;
+    private List<ProjectMenu> list;
 }
