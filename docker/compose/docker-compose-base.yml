@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  redis:
+    image: redis
+    container_name: my_redis
+    command: redis-server --requirepass root
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
+  mysql8.0:
+    # 镜像名
+    image: mysql
+    # 容器名(以后的控制都通过这个)
+    container_name: mysql
+    # 重启策略
+    restart: always
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+      # root 密码
+      MYSQL_ROOT_PASSWORD: root
+      # 初始化数据库(后续的初始化sql会在这个库执行)
+      MYSQL_DATABASE: skin
+      # 初始化用户(不能是root 会报错, 后续需要给新用户赋予权限)
+      # 映射端口
+    ports:
+      - "3306:3306"
+#    volumes:
+#      # 数据挂载
+#      #- /root/mysql/data/:/var/lib/mysql/
+#      # 配置挂载
+#      #- /root/mysql/conf/:/etc/mysql/conf.d/
+#      # 初始化目录挂载，注意此处我只跑了这个挂载，只是为了说明其他配置不应该数据初始化
+#      - /root/mysql/init/:/docker-entrypoint-initdb.d/
+#    command:
+#      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
+#      --default-authentication-plugin=mysql_native_password
+#      --character-set-server=utf8mb4
+#      --collation-server=utf8mb4_general_ci
+#      --explicit_defaults_for_timestamp=true
+#      --lower_case_table_names=1

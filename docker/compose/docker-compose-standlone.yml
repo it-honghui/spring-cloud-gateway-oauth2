@@ -29,7 +29,7 @@ services:
       MODE: standalone
       PREFER_HOST_MODE: hostname #如果支持主机名可以使用hostname,否则使用ip，默认也是ip
       SPRING_DATASOURCE_PLATFORM: mysql #数据源平台 仅支持mysql或不保存empty
-      MYSQL_SERVICE_HOST: 172.24.148.43
+      MYSQL_SERVICE_HOST: 172.24.148.84
       MYSQL_SERVICE_DB_NAME: nacos-db
       MYSQL_SERVICE_PORT: 3308
       MYSQL_SERVICE_USER: root
