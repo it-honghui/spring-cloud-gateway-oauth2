@@ -64,6 +64,7 @@ public class redisTokenFilter implements WebFilter {
       LOGGER.info("AuthGlobalFilter.tokenFilter() user:{}", userStr);
       JSONObject userJsonObject = new JSONObject(userStr);
       String username = (String) userJsonObject.get("user_name");
+      LOGGER.info("AuthGlobalFilter.tokenFilter() username:{}", username);
       String userLogin = (String) redisService.get(username);
       LOGGER.error(userLogin);
       if (userLogin == null) {
