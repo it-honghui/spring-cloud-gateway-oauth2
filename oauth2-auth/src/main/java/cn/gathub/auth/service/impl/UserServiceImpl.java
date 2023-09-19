@@ -2,6 +2,8 @@ package cn.gathub.auth.service.impl;
 
 import cn.gathub.auth.utils.redis.RedisService;
 import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AccountExpiredException;
@@ -30,6 +32,8 @@ import cn.hutool.core.collection.CollUtil;
  */
 @Service
 public class UserServiceImpl implements UserService {
+  private final static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+
   private List<User> userList;
   private final PasswordEncoder passwordEncoder;
   @Autowired
@@ -44,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    System.out.println(username);
+    LOGGER.info("loadUserByUsername:{}", username);
     User userListDemo = userServiceDB.getBaseMapper().getUserInfo(username);
     if (userListDemo == null) {
       System.out.println("no user");
