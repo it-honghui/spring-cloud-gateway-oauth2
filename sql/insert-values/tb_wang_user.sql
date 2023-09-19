@@ -1,0 +1,3 @@
+insert into MY_TABLE (id, username, password, mobile, pwd, deleted, version, avatar_url, enabled, credentials_non_expired, account_non_expired, account_non_locked)
+values  (1, 'admin', '$2a$10$DfEiVYQiJk3zL/tpqIN5heat8BqU6X1wNCZj1aqEsf9GRPYKoMyQC', '1', '$2a$10$DfEiVYQiJk3zL/tpqIN5heat8BqU6X1wNCZj1aqEsf9GRPYKoMyQC', 0, null, null, 1, 1, 1, 1),
+        (2, 'user', '$2a$10$DfEiVYQiJk3zL/tpqIN5heat8BqU6X1wNCZj1aqEsf9GRPYKoMyQC', null, '$2a$10$DfEiVYQiJk3zL/tpqIN5heat8BqU6X1wNCZj1aqEsf9GRPYKoMyQC', 0, null, null, 1, 1, 1, 1);
