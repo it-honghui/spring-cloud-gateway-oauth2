@@ -49,7 +49,8 @@ public class AuthorizationManager implements ReactiveAuthorizationManager<Author
     URI uri = authorizationContext.getExchange().getRequest().getURI();
     Object authoritiesFromMysql = userServiceDB.getBaseMapper().getData(uri.getPath());
     System.out.println(uri.getPath());
-    System.out.println(authoritiesFromMysql);
+    LOGGER.info("current path:{}", uri.getPath());
+    LOGGER.info("authoritiesFromMysql:{}", authoritiesFromMysql);
     List<String> authorities = Convert.toList(String.class, authoritiesFromMysql);
     authorities = authorities.stream().map(i -> i = AuthConstant.AUTHORITY_PREFIX + i).collect(Collectors.toList());
     LOGGER.info(authorities.toString());
