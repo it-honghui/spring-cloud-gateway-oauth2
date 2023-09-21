@@ -1,6 +1,6 @@
 package cn.gathub.resourceMenu.controller;
 
-import cn.gathub.resourceMenu.feign.IDemo2Client;
+import cn.gathub.client.clients.IDemo3Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
   @Autowired
-  IDemo2Client iDemo2Client;
+  IDemo3Client iDemo3Client;
 
   @GetMapping("/hello")
   public String hello() {
@@ -26,8 +26,8 @@ public class HelloController {
 
   @GetMapping("/feign")
   public String feign() {
-    String res = iDemo2Client.getUserIntroduce();
-    System.out.println(res);
+//    String res = iDemo3Client.getUserIntroduce();
+//    System.out.println(res);
     return "Hello World ! feign";
   }
 }

@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * @author Honghui [wanghonghui_work@163.com] 2021/3/16
  */
-@EnableFeignClients
+@EnableFeignClients(basePackages = "cn.gathub.client.clients")
 @EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("cn.gathub.resourceMenu.mapper")
