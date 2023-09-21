@@ -1,6 +1,6 @@
 package cn.gathub.resource.controller;
 
-import cn.gathub.resource.feign.IDemo2Client;
+import cn.gathub.client.clients.IDemo3Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
   @Autowired
-  IDemo2Client iDemo2Client;
+  IDemo3Client iDemo2Client;
 
   @GetMapping("/hello")
   public String hello() {

@@ -1,6 +1,6 @@
-package cn.gathub.demo.clients;
+package cn.gathub.client.clients;
 
-import cn.gathub.demo.config.Feignconfigs;
+import cn.gathub.client.config.Feignconfigs;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

@@ -1,4 +1,4 @@
-package cn.gathub.demo.config;
+package cn.gathub.client.config;
 
 import feign.Logger;
 import org.springframework.context.annotation.Bean;
