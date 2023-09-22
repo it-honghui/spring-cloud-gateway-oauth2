@@ -53,6 +53,7 @@
     </dependencyManagement>
 
     <dependencies>
+<!--   公共引入部分，子包自动引入     -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
@@ -83,7 +84,6 @@
             <version>${hutool-version}</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

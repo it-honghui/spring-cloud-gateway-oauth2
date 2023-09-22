@@ -1,5 +1,10 @@
 # spring-cloud-gateway-oauth2
 # todos：
+## 业务
+- 对接evan-admin
+  - 用户登录与鉴权
+  - 登录菜单鉴权
+## 技术
 - 架构更改，增加commom-core，将feign放到里面。增加buiness，将业务模块放进去
 - System.out.println的logger整改
 - 日志统一收集
