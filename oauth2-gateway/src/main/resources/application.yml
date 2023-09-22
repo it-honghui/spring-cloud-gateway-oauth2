@@ -17,6 +17,12 @@ spring:
         server-addr: localhost:8848
     gateway:
       routes: # 配置路由路径
+        - id: business-demo-route
+          uri: lb://business-demo
+          predicates:
+            - Path=/business-demo/**
+          filters:
+            - StripPrefix=1
         - id: oauth2-resource-route
           uri: lb://oauth2-resource
           predicates:

@@ -13,6 +13,7 @@
     <modules>
         <module>oauth2-resource</module>
         <module>oauth2-resource-menu</module>
+        <module>bussiness-demo</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

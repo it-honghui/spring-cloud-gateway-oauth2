@@ -1,0 +1,42 @@
+server:
+  port: 9509
+spring:
+  profiles:
+    active: dev
+  application:
+    name: business-demo
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  datasource:
+    name: defaultDataSource
+    url: jdbc:mysql://localhost:3306/project
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: 0
+    port: 6379
+    host: localhost
+    password: root
+    cache-minute: 1
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启sql日志
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      table-prefix: tb_wang_
+      logic-delete-field: deleted
+      logic-not-delete-value: 0
+      logic-delete-value: 1

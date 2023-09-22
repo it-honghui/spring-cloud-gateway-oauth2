@@ -1,7 +1,6 @@
-package cn.gathub.resource.controller;
+package cn.gathub.bussinessDemo.controller;
 
 import cn.gathub.client.clients.IDemo3Client;
-import cn.gathub.client.clients.IDemo4Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,6 @@ public class HelloController {
   @Autowired
   IDemo3Client iDemo3Client;
 
-  @Autowired
-  IDemo4Client iDemo4Client;
-
-
   @GetMapping("/hello")
   public String hello() {
     return "Hello World !";
@@ -38,10 +33,8 @@ public class HelloController {
 
     // 从Header中获取用户信息
     String userStr = request.getHeader("user");
-    String resDemo3 = iDemo3Client.getUserIntroduce(userStr);
-    LOGGER.info("/feignDemo3 res:{}", resDemo3);
-    String resDemo4 = iDemo4Client.getUserIntroduce(userStr);
-    LOGGER.info("/feignDemo4 res:{}", resDemo4);
+    String res = iDemo3Client.getUserIntroduce(userStr);
+    LOGGER.info("/feign res:{}", res);
     return "Hello World ! feign";
   }
 }
