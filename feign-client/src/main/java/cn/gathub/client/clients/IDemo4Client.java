@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface IDemo4Client {
     @RequestMapping(
             value = "/business-demo",
-            method = RequestMethod.POST
+            method = RequestMethod.GET
     )
     String getUserIntroduce(@RequestHeader("user") String headers);
 }
