@@ -4,6 +4,8 @@ import cn.gathub.resourceMenu.VO.MenuVo;
 import cn.gathub.resourceMenu.domain.ProjectMenu;
 import cn.gathub.resourceMenu.service.imp.ProjectMenuDBImpl;
 import cn.hutool.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 @RestController()
 @RequestMapping("/menu")
 public class Menus {
+  private final static Logger LOGGER = LoggerFactory.getLogger(Menus.class);
+
   @Autowired
   ProjectMenuDBImpl projectMenuDB;
 
@@ -34,11 +38,12 @@ public class Menus {
     List<ProjectMenu> allMenus = projectMenuDB.getBaseMapper().getRoleNames(authoritiesStr);
     MenuVo menuVo = new MenuVo();
     List<ProjectMenu> projectMenus = allMenus.stream()
-              .filter(item -> item.getParentCid() == 0)
-              .peek(item -> item.setChildren(Menus.getChildren(item, allMenus)))
-              .sorted(Comparator.comparingInt(ProjectMenu::getSort).reversed())
+              .filter(item -> item.getParentCid() == 1)
+            .peek(item -> item.setChildren(Menus.getChildren(item, allMenus)))
+            .sorted(Comparator.comparingInt(ProjectMenu::getSort).reversed())
               .collect(Collectors.toList());
     menuVo.setList(projectMenus);
+    LOGGER.info(String.valueOf(projectMenus.size()));
     menuVo.setTotal(projectMenus.size());
     return menuVo;
   }

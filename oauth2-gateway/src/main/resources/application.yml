@@ -32,7 +32,7 @@ spring:
         - id: business-menu-route
           uri: lb://business-menu
           predicates:
-            - Path=/resource-menu/**
+            - Path=/business-menu/**
           filters:
             - StripPrefix=1
         - id: oauth2-auth-route
