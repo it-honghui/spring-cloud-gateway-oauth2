@@ -35,7 +35,6 @@ public class HelloController {
 
   @GetMapping("/feign")
   public String feign(HttpServletRequest request) {
-
     // 从Header中获取用户信息
     String userStr = request.getHeader("user");
     String resDemo3 = iDemo3Client.getUserIntroduce(userStr);

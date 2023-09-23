@@ -29,8 +29,8 @@ spring:
             - Path=/resource/**
           filters:
             - StripPrefix=1
-        - id: oauth2-resource-menu-route
-          uri: lb://oauth2-resource-menu
+        - id: business-menu-route
+          uri: lb://business-menu
           predicates:
             - Path=/resource-menu/**
           filters:

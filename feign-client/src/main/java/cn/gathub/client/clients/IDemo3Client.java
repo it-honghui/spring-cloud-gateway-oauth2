@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(value = "oauth2-resource-menu")
+@FeignClient(value = "business-menu")
 public interface IDemo3Client {
     @RequestMapping(
             value = "/menu/list",
