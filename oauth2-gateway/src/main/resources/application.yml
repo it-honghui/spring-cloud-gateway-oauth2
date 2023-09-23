@@ -23,8 +23,8 @@ spring:
             - Path=/business-demo/**
           filters:
             - StripPrefix=1
-        - id: oauth2-resource-route
-          uri: lb://oauth2-resource
+        - id: business-resource
+          uri: lb://business-resource
           predicates:
             - Path=/resource/**
           filters:
