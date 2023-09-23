@@ -13,10 +13,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("cn.gathub.business.demo.mapper")
-public class Oauth2ResourceApplication {
+public class BusinessDemoApp {
 
   public static void main(String[] args) {
-    SpringApplication.run(Oauth2ResourceApplication.class, args);
+    SpringApplication.run(BusinessDemoApp.class, args);
   }
 
 }
