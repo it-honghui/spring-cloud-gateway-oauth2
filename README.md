@@ -886,7 +886,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cn.gathub.resource.domain.User;
+import domain.cn.gathub.business.demo.User;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.json.JSONObject;
 
