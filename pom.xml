@@ -14,6 +14,7 @@
         <module>oauth2-auth</module>
         <module>feign-client</module>
         <module>business-core</module>
+        <module>common-core</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
