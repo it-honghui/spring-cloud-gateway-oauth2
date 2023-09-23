@@ -9,7 +9,7 @@
         <version>1.0.0</version>
     </parent>
     <packaging>pom</packaging>
-    <artifactId>business</artifactId>
+    <artifactId>business-core</artifactId>
     <modules>
         <module>business-resource</module>
         <module>business-menu</module>
