@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 /**
  * 白名单路径访问时需要移除JWT请求头
  *
- * @author Honghui [wanghonghui_work@163.com] 2021/3/16
+ * @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 @Component
 public class IgnoreUrlsRemoveJwtFilter implements WebFilter {

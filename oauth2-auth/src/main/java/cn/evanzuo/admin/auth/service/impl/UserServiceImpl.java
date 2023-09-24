@@ -23,7 +23,7 @@ import cn.evanzuo.admin.auth.domain.entity.User;
 /**
  * 用户管理业务类
  *
- * @author Honghui [wanghonghui_work@163.com] 2021/3/16
+ * @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 @Service
 public class UserServiceImpl implements UserService {

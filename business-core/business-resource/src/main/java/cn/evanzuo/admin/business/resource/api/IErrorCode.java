@@ -3,7 +3,7 @@ package cn.evanzuo.admin.business.resource.api;
 /**
  * 封装API的错误码
  *
- * @author Honghui [wanghonghui_work@163.com] 2021/3/16
+ * @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 public interface IErrorCode {
   long getCode();

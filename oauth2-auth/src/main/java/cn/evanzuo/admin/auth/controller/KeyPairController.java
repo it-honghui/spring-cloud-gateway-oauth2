@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * 获取RSA公钥接口
  *
- * @author Honghui [wanghonghui_work@163.com] 2021/3/16
+ * @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 @RestController
 public class KeyPairController {

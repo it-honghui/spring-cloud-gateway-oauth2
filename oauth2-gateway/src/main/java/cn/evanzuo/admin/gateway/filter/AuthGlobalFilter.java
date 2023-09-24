@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 /**
  * 将登录用户的JWT转化成用户信息的全局过滤器
  *
- * @author Honghui [wanghonghui_work@163.com] 2021/3/16
+ * @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 @Component
 public class AuthGlobalFilter implements GlobalFilter, Ordered {

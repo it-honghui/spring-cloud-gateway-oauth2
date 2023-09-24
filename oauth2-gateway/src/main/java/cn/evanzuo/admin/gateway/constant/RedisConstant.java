@@ -1,7 +1,7 @@
 package cn.evanzuo.admin.gateway.constant;
 
 /**
- * @author Honghui [wanghonghui_work@163.com] 2021/3/16
+ * @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 public class RedisConstant {
 

@@ -25,7 +25,7 @@ import reactor.core.publisher.Mono;
 /**
  * 鉴权管理器，用于判断是否有资源的访问权限
  *
- * @author Honghui [wanghonghui_work@163.com] 2021/3/16
+ * @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 @Component
 public class AuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {

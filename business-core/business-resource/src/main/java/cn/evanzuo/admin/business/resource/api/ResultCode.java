@@ -3,7 +3,7 @@ package cn.evanzuo.admin.business.resource.api;
 /**
  * 枚举了一些常用API操作码
  *
- * @author Honghui [wanghonghui_work@163.com] 2021/3/16
+ * @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 public enum ResultCode implements IErrorCode {
   SUCCESS(200, "操作成功"),
