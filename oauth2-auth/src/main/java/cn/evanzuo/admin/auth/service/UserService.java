@@ -3,7 +3,7 @@ package cn.evanzuo.admin.auth.service;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
- * @author Honghui [wanghonghui_work@163.com] 2021/3/18
+ * @author @author EvanZuo[739221432@qq.com] 2023/09/24
  */
 public interface UserService extends UserDetailsService {
 
