@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>business-core</artifactId>
-        <groupId>cn.gathub</groupId>
+        <groupId>cn.evan.zuo</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -27,7 +27,7 @@
             <artifactId>spring-cloud-openfeign-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.gathub</groupId>
+            <groupId>cn.evan.zuo</groupId>
             <artifactId>common-feign-client</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
