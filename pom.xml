@@ -12,7 +12,7 @@
     <modules>
         <module>oauth2-gateway</module>
         <module>oauth2-auth</module>
-        <module>feign-client</module>
+        <module>common-core</module>
         <module>business-core</module>
         <module>common-core</module>
     </modules>

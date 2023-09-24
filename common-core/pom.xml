@@ -8,9 +8,11 @@
         <artifactId>gathub-oauth2</artifactId>
         <version>1.0.0</version>
     </parent>
-
+    <packaging>pom</packaging>
     <artifactId>common-core</artifactId>
-
+    <modules>
+        <module>feign-client</module>
+    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
