@@ -9,7 +9,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>feign-client</artifactId>
+    <artifactId>common-feign-client</artifactId>
 <!--    <properties>-->
 <!--        <maven.compiler.source>19</maven.compiler.source>-->
 <!--        <maven.compiler.target>19</maven.compiler.target>-->

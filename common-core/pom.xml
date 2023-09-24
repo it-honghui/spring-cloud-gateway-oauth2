@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
     <artifactId>common-core</artifactId>
     <modules>
-        <module>feign-client</module>
+        <module>common-feign-client</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
